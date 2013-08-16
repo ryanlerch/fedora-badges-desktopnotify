@@ -1,6 +1,7 @@
 import fedmsg
 from urlparse import urlparse
 import requests
+import pprint
 from os.path import basename
 import os
 from gi.repository import Notify, GLib
@@ -21,7 +22,10 @@ for name, endpoint, topic, msg in fedmsg.tail_messages(**config):
 		username = msg["msg"]["user"]["username"]
 		badgename = msg["msg"]["badge"]["name"]
 		image_url = msg["msg"]["badge"]["image_url"]
-		filename = "badges/"+basename(urlparse(image_url).path)
+		try:
+			filename = "badges/"+basename(urlparse(image_url).path)
+		except AttributeError:
+			pprint.pprint(msg)
 		f = open(filename,'wb')
 		f.write(requests.get(image_url).content)
 		f.close()
